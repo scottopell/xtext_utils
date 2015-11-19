@@ -14,13 +14,17 @@ end
 def check_output output, expected_output, cmd
   if output == expected_output
     puts "\t\t#{Tty.green}OKAY#{Tty.reset}"
+    return 0
   else
     puts "\t\t#{Tty.red}FAILED#{Tty.reset}"
     puts "\t\tCommand was: #{cmd}"
     puts "\t\tOutput was:\t#{output}"
     puts "\t\tExpected was:\t#{expected_output}"
+    return 1
   end
 end
+
+num_failures = 0
 
 puts "Validation Test"
 
@@ -29,7 +33,7 @@ output = `#{cmd}`
 expected_output = "\n"
 puts "\t#{Tty.blue}valid input:"
 
-check_output output, expected_output, cmd
+num_failures += check_output output, expected_output, cmd
 
 
 cmd = "./validator.rb invalid.mydsl"
@@ -37,7 +41,7 @@ output = `#{cmd}`
 expected_output = "invalid.mydsl: 1: mismatched input '<EOF>' expecting '!'\n"
 puts "\t#{Tty.blue}invalid input:"
 
-check_output output, expected_output, cmd
+num_failures += check_output output, expected_output, cmd
 
 
 puts "Completion Test"
@@ -47,7 +51,7 @@ output = `#{cmd}`
 expected_output = "Hello\n"
 puts "\t#{Tty.blue}Basic Completion"
 
-check_output output, expected_output, cmd
+num_failures += check_output output, expected_output, cmd
 
 
 puts "Formatter Test"
@@ -57,4 +61,6 @@ output = `#{cmd}`
 expected_output = "Hello\n"
 puts "\t#{Tty.blue}Basic Formatting"
 
-check_output output, expected_output, cmd
+num_failures += check_output output, expected_output, cmd
+
+exit num_failures
