@@ -6,13 +6,10 @@ require 'net/http'
 
 file_contents = $stdin.read
 
-uri = URI.parse 'http://localhost:8080'
-req = Net::HTTP::Post.new 'http://localhost:8080/xtext-service/format'
+params_str = "?resource=text.mydsl&fullText=#{URI.escape(file_contents)}"
+uri = URI.parse "http://localhost:8080/xtext-service/format#{params_str}"
+res = Net::HTTP.post_form uri, {}
 
-req.set_form_data resource: 'text.mydsl',
-  full_text: URI.escape(file_contents)
-
-res = Net::HTTP.new(uri.host, uri.port).start { |http| http.request(req) }
 json = JSON.parse res.body
 
 puts json['formattedText']

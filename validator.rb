@@ -6,13 +6,9 @@ require 'net/http'
 
 file_contents = IO.read ARGF.argv[0]
 
-uri = URI.parse 'http://localhost:8080'
-req = Net::HTTP::Post.new 'http://localhost:8080/xtext-service/validate'
-
-req.set_form_data resource: 'text.mydsl',
-  full_text: URI.escape(file_contents)
-
-res = Net::HTTP.new(uri.host, uri.port).start { |http| http.request(req) }
+params_str = "?resource=text.mydsl&fullText=#{URI.escape(file_contents)}"
+uri = URI.parse "http://localhost:8080/xtext-service/validate#{params_str}"
+res = Net::HTTP.post_form uri, {}
 
 json = JSON.parse res.body
 
