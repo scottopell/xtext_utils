@@ -56,7 +56,7 @@ num_failures += check_output output, expected_output, cmd
 
 puts "Formatter Test"
 
-cmd = "cat test.mydsl | ./formatter.sh"
+cmd = "cat test.mydsl | ./formatter.rb"
 output = `#{cmd}`
 expected_output = "Hello\n"
 puts "\t#{Tty.blue}Basic Formatting"

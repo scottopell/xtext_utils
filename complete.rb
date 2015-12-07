@@ -1,6 +1,8 @@
 #!/usr/bin/ruby
 require 'JSON'
 require 'stringio'
+require 'uri'
+require 'net/http'
 
 
 file_contents = ''
@@ -38,9 +40,16 @@ else
 end
 
 
-json_output = `curl -s -G "http://localhost:8080/xtext-service/assist?resource=text.mydsl&caretOffset=#{file_offset}" --data-urlencode "fullText=#{file_contents}" -X POST`
+uri = URI.parse 'http://localhost:8080'
+req = Net::HTTP::Post.new 'http://localhost:8080/xtext-service/assist'
 
-json = JSON.parse(json_output)
+req.set_form_data resource: 'text.mydsl',
+  caretOffset: file_offset,
+  full_text: URI.escape(file_contents)
+
+res = Net::HTTP.new(uri.host, uri.port).start { |http| http.request(req) }
+
+json = JSON.parse res.body
 
 s = StringIO.new
 json['entries'].each do |entry|
